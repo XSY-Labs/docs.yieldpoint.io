@@ -1,0 +1,65 @@
+---
+title: "Seasons and positions"
+description: "How leaderboard seasons, the season path segment, multiplier schedules, and position keys work."
+---
+
+Points accrue in seasons. Every leaderboard route takes the season as a required path segment, and every season returns the same response shape.
+
+## Season path segment
+
+The segment is the letter `s` followed by the season number: `s1`, `s2`, and so on. There is no default season, so `/v1/leaderboard` without a segment is not a route.
+
+A segment that does not match the pattern, or that names a season the API does not know, returns `400`:
+
+```json
+{
+  "error": "Bad Request",
+  "message": "season must be \"s\" followed by the season number, for example s2",
+  "traceId": "5d9469404c0605d489d9133009083599"
+}
+```
+
+```json
+{
+  "error": "Bad Request",
+  "message": "Season 99 not found.",
+  "traceId": "fcd54225f0b9b44de48f59d123a4a66f"
+}
+```
+
+## Data source per season
+
+| Season | Source | `asOf` |
+|---|---|---|
+| Season 1 (`s1`) | Static snapshot | Fixed at `2025-11-05` |
+| Season 2 onward | Live analytics tables | Last closed New York day; advances once per day |
+
+Season 1 has no multiplier schedule, so its `multipliers` array is empty. Points for Season 2 onward are computed from end-of-day position values and the multiplier in force on each day.
+
+## Multiplier schedule
+
+`GET /v1/leaderboard/:season` returns the schedule as `multipliers`, one row per window:
+
+| Field | Meaning |
+|---|---|
+| `position` | Position key the window applies to |
+| `multiplier` | Points multiplier in force during the window |
+| `firstDay` | First New York day of the window, `YYYY-MM-DD` |
+| `lastDay` | Last day of the window, or `null` while the window is open-ended |
+
+Rows are ordered by `position`, then `firstDay`. A position can appear more than once when its multiplier changes over the season.
+
+## Position keys
+
+The `position` enum identifies where a wallet's value sits. The same keys appear in multiplier rows, per-wallet breakdowns, and daily history.
+
+| Key | Position |
+|---|---|
+| `hold_uty` | UTY held directly |
+| `hold_yuty` | yUTY held directly |
+| `euler_collateral` | yUTY supplied as collateral on Euler |
+| `euler_lend` | USDC lent on Euler |
+| `pendle_yt` | Pendle yield token (YT) for yUTY |
+| `pendle_lp` | Pendle liquidity-pool (LP) token for yUTY |
+
+Position value is summed across chains where a position exists on more than one chain. The [history route](/api-reference/leaderboard/get-address-history) is the only one that reports per-chain rows.

@@ -1,0 +1,15 @@
+---
+title: "Get leaderboard"
+description: "Top 100 wallets by points for a season, with the multiplier schedule."
+openapi: "https://api.yieldpoint.io/docs/json GET /v1/leaderboard/{season}"
+---
+
+Returns the top 100 wallets by `totalPoints` for the season, ranked from 1, plus the season's multiplier schedule. `totalParticipants` counts every wallet with points in the season, not only the 100 returned.
+
+`dailyRate` on each entry is the points that wallet earned on `asOf`. `asOf` is the last closed New York day in the points tables, or `null` when the season has no data. Season 1 is a static snapshot with `asOf` fixed at `2025-11-05`.
+
+The season segment is required. A malformed or unknown season returns `400`. See [Seasons and positions](/api-reference/leaderboard/seasons) for the segment format, the multiplier rows, and the position keys.
+
+```bash
+curl https://api.yieldpoint.io/v1/leaderboard/s2
+```

@@ -1,0 +1,15 @@
+---
+title: "Get wallet history"
+description: "A wallet's daily balances and points for a season, oldest day first."
+openapi: "https://api.yieldpoint.io/docs/json GET /v1/leaderboard/{season}/{address}/history"
+---
+
+Returns one row per New York calendar day on which the wallet held a tracked position during the season, oldest first. Only closed days are included.
+
+Each day reports the `points` earned that day, the wallet's total position `valueUsd`, and `cumulativePoints` through that day. The last day's `cumulativePoints` equals the wallet's `totalPoints` from [Get wallet rank](/api-reference/leaderboard/get-address) exactly, so you can reconcile the two routes without rounding.
+
+`positions` is the per-chain detail for the day. Unlike the breakdown on the wallet route, each row is one position on one chain: `position`, `chainId`, end-of-day `balance`, `valueUsd`, the `multiplier` in force that day, and the `points` that row contributed. Summing `points` across the rows gives the day's `points`.
+
+```bash
+curl https://api.yieldpoint.io/v1/leaderboard/s2/0x1111111111111111111111111111111111111111/history
+```

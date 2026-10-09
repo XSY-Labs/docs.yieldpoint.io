@@ -1,0 +1,15 @@
+---
+title: "Get wallet rank"
+description: "One wallet's rank, points, and per-position breakdown for a season."
+openapi: "https://api.yieldpoint.io/docs/json GET /v1/leaderboard/{season}/{address}"
+---
+
+Returns the wallet's rank and points for the season, with a `breakdown` row per position. `rank` is `null` when the wallet has no points in the season; `totalPoints` is then `0` and `breakdown` is empty. `totalParticipants` is the number of ranked wallets, so `rank` is always between `1` and `totalParticipants` when present.
+
+Each `breakdown` row reports the position's `multiplier` in force on `asOf`, its `valueUsd` on `asOf` summed across chains, the `dailyPoints` it earned on `asOf`, and the `totalPoints` it earned over the season. The wallet-level `dailyRate` and `totalPoints` are the sums of those columns.
+
+The address must be a 0x-prefixed 40-character hex string and is case-insensitive. Anything else returns `400`. See [API overview](/api-reference/overview#addresses).
+
+```bash
+curl https://api.yieldpoint.io/v1/leaderboard/s2/0x1111111111111111111111111111111111111111
+```

@@ -1,0 +1,17 @@
+---
+title: "Get daily portfolio"
+description: "End-of-day balances and dollar values per token per chain for a wallet."
+openapi: "https://api.yieldpoint.io/docs/json GET /v1/address/{address}/portfolio/daily"
+---
+
+Returns one row per closed New York calendar day, oldest first. Each day carries `totalValueUsd` and a `positions` array with one row per token per chain: `token`, `chainId`, end-of-day `balance` as a formatted decimal, `usdPerToken`, and `valueUsd`.
+
+`asOf` is the last closed day in the daily portfolio table. It reflects the table, not the wallet: a wallet with no history still gets the current `asOf` with an empty `days` array. It is `null` only when the table has no closed days. The current New York day is never included.
+
+`from` and `to` are optional `YYYY-MM-DD` bounds, both inclusive. Omit both to get the full history. Either can be used alone.
+
+Balances in the wallet's Euler sub-accounts are attributed to the wallet. See [Portfolio data](/api-reference/address/portfolio) for the token keys.
+
+```bash
+curl "https://api.yieldpoint.io/v1/address/0x1111111111111111111111111111111111111111/portfolio/daily?from=2026-10-01&to=2026-10-08"
+```

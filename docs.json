@@ -45,7 +45,11 @@
       "display": "interactive"
     },
     "examples": {
-      "languages": ["bash", "javascript", "python"]
+      "languages": [
+        "bash",
+        "javascript",
+        "python"
+      ]
     }
   },
   "navigation": {
@@ -103,7 +107,48 @@
       },
       {
         "tab": "API reference",
-        "openapi": "https://api.yieldpoint.io/docs/json"
+        "openapi": "https://api.yieldpoint.io/docs/json",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api-reference/overview"
+            ]
+          },
+          {
+            "group": "Leaderboard",
+            "pages": [
+              "api-reference/leaderboard/seasons",
+              "api-reference/leaderboard/get-leaderboard",
+              "api-reference/leaderboard/get-address",
+              "api-reference/leaderboard/get-address-history"
+            ]
+          },
+          {
+            "group": "Address",
+            "pages": [
+              "api-reference/address/portfolio",
+              "api-reference/address/get-portfolio",
+              "api-reference/address/get-portfolio-daily",
+              "GET /v1/transactions/{address}"
+            ]
+          },
+          {
+            "group": "Protocol data",
+            "pages": [
+              "GET /v1",
+              "GET /v1/uty",
+              "GET /v1/yuty"
+            ]
+          },
+          {
+            "group": "Health",
+            "pages": [
+              "GET /health",
+              "GET /health/ready"
+            ]
+          }
+        ]
       }
     ],
     "global": {

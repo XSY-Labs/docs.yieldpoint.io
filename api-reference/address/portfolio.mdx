@@ -1,0 +1,32 @@
+---
+title: "Portfolio data"
+description: "Token keys, chain keying, and the Euler sub-account rule shared by the portfolio routes."
+---
+
+Two routes report a wallet's token holdings. [`GET /v1/address/:address/portfolio`](/api-reference/address/get-portfolio) returns a per-event balance history. [`GET /v1/address/:address/portfolio/daily`](/api-reference/address/get-portfolio-daily) returns end-of-day balances with dollar values. Both use the same token keys and the same wallet attribution rule.
+
+## Token keys
+
+| Key | Token |
+|---|---|
+| `uty` | UTY |
+| `yuty` | yUTY |
+| `pendleSy` | Pendle standardized yield (SY) wrapper for yUTY |
+| `eulerYuty` | yUTY deposited on Euler |
+| `eulerUsdc` | USDC deposited on Euler |
+| `pendleYt` | Pendle yield token (YT) for yUTY |
+| `pendleLp` | Pendle liquidity-pool (LP) token for yUTY |
+
+On the per-event route, a chain appears only when the wallet has balance history on it, and every chain that appears carries all seven token keys. Tokens the wallet has never held on that chain are empty arrays, not missing keys. A wallet with no history on any chain returns an empty object.
+
+## Euler sub-accounts
+
+Balances held in a wallet's Euler sub-accounts are attributed to the owning wallet. You query the wallet address, and the response includes `eulerYuty` and `eulerUsdc` balances from all of its sub-accounts.
+
+## Chains
+
+`chainId` values are numeric EVM chain IDs. The per-event route keys its response by chain ID; the daily route reports `chainId` on each position row. See [Chain IDs](/api-reference/overview#chain-ids).
+
+## Balances and values
+
+Balances are formatted decimals in token units, not raw integer amounts. Dollar values on the daily route use `usdPerToken` for that day, so `valueUsd` equals `balance` times `usdPerToken` for each position and `totalValueUsd` is the sum across positions for the day.

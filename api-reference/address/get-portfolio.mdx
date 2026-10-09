@@ -1,0 +1,34 @@
+---
+title: "Get portfolio history"
+description: "Per-event token balance history for a wallet, keyed by chain ID then token."
+openapi: "https://api.yieldpoint.io/docs/json GET /v1/address/{address}/portfolio"
+---
+
+Returns every balance change for the wallet, keyed by chain ID, then by token key. Each token holds an array of `{ date, timestamp, balance }` snapshots, one per on-chain event that changed the balance, with `timestamp` in Unix seconds and `balance` as a formatted decimal.
+
+A chain appears only when the wallet has balance history on it, and each chain that appears carries all seven token keys, with empty arrays for tokens never held there. A wallet with no history returns `{}`. Balances in the wallet's Euler sub-accounts are attributed to the wallet. See [Portfolio data](/api-reference/address/portfolio) for the token keys and the attribution rule.
+
+For end-of-day balances with dollar values, use [Get daily portfolio](/api-reference/address/get-portfolio-daily) instead.
+
+```bash
+curl https://api.yieldpoint.io/v1/address/0x1111111111111111111111111111111111111111/portfolio
+```
+
+A wallet with yUTY history on Avalanche and nothing elsewhere returns:
+
+```json
+{
+  "43114": {
+    "uty": [],
+    "yuty": [
+      { "date": "2026-04-03", "timestamp": 1775239784, "balance": 10 },
+      { "date": "2026-04-03", "timestamp": 1775242040, "balance": 454956.49 }
+    ],
+    "pendleSy": [],
+    "eulerYuty": [],
+    "eulerUsdc": [],
+    "pendleYt": [],
+    "pendleLp": []
+  }
+}
+```

@@ -1,0 +1,55 @@
+---
+title: "API overview"
+description: "Base URL, date conventions, address validation, and the error shape shared by every YieldPoint API route."
+---
+
+The YieldPoint API serves read-only protocol and wallet data at `https://api.yieldpoint.io`. Every route returns JSON. No authentication is required.
+
+## Specification
+
+The API publishes its own OpenAPI 3.0 document. The endpoint pages in this section are generated from it, so parameters and response schemas always match what the API serves.
+
+| Format | URL |
+|---|---|
+| Swagger UI | `https://api.yieldpoint.io/docs` |
+| JSON | `https://api.yieldpoint.io/docs/json` |
+| YAML | `https://api.yieldpoint.io/docs/yaml` |
+
+## Days and `asOf`
+
+Daily data is keyed by New York calendar day, formatted `YYYY-MM-DD`. Only closed days are included: the current New York day never appears until it ends. Daily tables refresh once per closed day.
+
+Routes that read from a daily table return an `asOf` field. It is the last closed New York day present in that table, independent of the wallet or season you asked about, or `null` when the table has no closed days.
+
+## Addresses
+
+Every `:address` path parameter must be a 0x-prefixed 40-character hex string. Addresses are case-insensitive. Anything else returns `400`:
+
+```json
+{
+  "error": "Bad Request",
+  "message": "address must be a 0x-prefixed 40-character hex string",
+  "traceId": "97825a8c6549b7e9ef90e63a646519dd"
+}
+```
+
+## Chain IDs
+
+`chainId` fields are numeric EVM chain IDs. See the [Contracts](/protocol/architecture/contracts) page for the chains YieldPoint is deployed on and the contract addresses on each.
+
+| Chain | `chainId` |
+|---|---|
+| Base | `8453` |
+| Avalanche | `43114` |
+| Katana | `747474` |
+
+## Errors
+
+Error responses share one shape. `error` is the HTTP status text, `message` explains what was wrong with the request, and `traceId` identifies the request for support. Some validation errors also include a `validation` array with one string per failed check.
+
+| Field | Type | Notes |
+|---|---|---|
+| `error` | string | Always present |
+| `message` | string | Always present |
+| `traceId` | string or null | Quote this when reporting a problem |
+| `validation` | string[] or null | Per-check detail, when available |
