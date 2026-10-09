@@ -36,9 +36,10 @@ the published site.
   with at least a `title` field
 - `snippets/` — reusable content fragments, imported into pages as JSX
   components (currently absent; returns with real snippets)
-- `api-reference/openapi.json` — OpenAPI 3.1 spec. Mintlify auto-generates
-  endpoint pages from the spec (currently absent; real spec pulls from
-  https://api.yieldpoint.io/docs/json)
+- `api-reference/` — MDX pages for the API reference tab. Endpoint pages
+  use `openapi:` frontmatter against the live spec at
+  https://api.yieldpoint.io/docs/json; no spec is vendored here. See
+  `.claude/rules/api-reference.md`
 - `logo/` and root `favicon.svg` — static brand assets
 - `.mintignore` — files and directories excluded from the build
 
