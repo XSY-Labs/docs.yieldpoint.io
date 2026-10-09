@@ -71,9 +71,9 @@ Same semantic failure ("the caller isn't authorized to claim this request"), dif
 
 ### Why it breaks
 
-The hub vault processes withdrawal requests in **chain-agnostic FIFO** order. The `WithdrawalRequest` struct has no `sourceEid` or origin-chain field — a request issued from Avalanche and a request issued from Katana are indistinguishable in hub storage. Each spoke tracks its own per-controller `pendingClaims` counter, which increments on `requestRedeem` and decrements on `redeem`, but the counters don't sync cross-chain. Three failure modes arise from this mismatch:
+The hub vault consumes a controller's matured withdrawal requests in **chain-agnostic storage order** — iteration order is implementation-defined, not first-in-first-out. The `WithdrawalRequest` struct has no `sourceEid` or origin-chain field — a request issued from Avalanche and a request issued from Katana are indistinguishable in hub storage. Each spoke tracks its own per-controller `pendingClaims` counter, which increments on `requestRedeem` and decrements on `redeem`, but the counters don't sync cross-chain. Three failure modes arise from this mismatch:
 
-- **Cross-spoke sweeping.** A `redeem` call from spoke A can settle requests originated from spoke B, because the hub processes FIFO and doesn't know the origin.
+- **Cross-spoke sweeping.** A `redeem` call from spoke A can settle requests originated from spoke B, because the hub consumes matured requests in storage order and doesn't know the origin.
 - **Partial stranding.** If a spoke claim consumes its ticket for less than the full hub-side request amount, the remaining shares are only claimable directly from the hub, not from either spoke.
 - **Orphaned tickets.** After cross-spoke sweeping, the "source" spoke still has `pendingClaims > 0` (its counter wasn't decremented because the hub settled into a different spoke's claim). A follow-up `redeem` on the source spoke consumes the ticket on the spoke side (counter decrements, LZ fee debited) but the hub rejects with `ERC4626ExceededMaxRedeem` (or similar) because the matching hub state has already been settled. The ticket is burned, the gas tank is debited, and nothing arrives.
 

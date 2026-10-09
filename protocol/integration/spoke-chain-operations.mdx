@@ -84,7 +84,7 @@ yUTY spoke withdrawal is **two user transactions** — the protocol doesn't roun
 </Steps>
 
 <Warning>
-  **Multi-spoke claim coordination.** If the same controller has pending withdrawal requests on more than one spoke, the hub processes them in FIFO order regardless of origin chain — a `redeem` call from one spoke can consume a request that originated from another. This guide does not support the multi-spoke-concurrent-request pattern. See [Gotchas: multi-spoke origin tracking](/protocol/integration/gotchas#multi-spoke-origin-tracking).
+  **Multi-spoke claim coordination.** If the same controller has pending withdrawal requests on more than one spoke, the hub consumes matured requests in storage order regardless of origin chain — a `redeem` call from one spoke can consume a request that originated from another. This guide does not support the multi-spoke-concurrent-request pattern. See [Gotchas: multi-spoke origin tracking](/protocol/integration/gotchas#multi-spoke-origin-tracking).
 </Warning>
 
 ## Fee-underflow guard
